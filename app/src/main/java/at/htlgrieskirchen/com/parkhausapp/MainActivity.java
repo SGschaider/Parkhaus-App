@@ -12,7 +12,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //asd
+        //asdfasdfasdfasdfasdfasdfasdfasdf
     }
 
 
@@ -38,5 +38,9 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void einfügen()
+    {
+        System.out.print("");
+    }
 
 }
