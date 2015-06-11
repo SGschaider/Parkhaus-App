@@ -5,18 +5,39 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.osmdroid.api.IMapController;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 
 public class MainActivity extends Activity {
 
-    //protected MapView m
+    protected MapView mapView;
+    protected IMapController mapController;
+
+    private boolean useOnlineMap = true;
+    private int zoom = 12;
+    private GeoPoint linz = new GeoPoint(48.351054, 14.249727);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mapView = (MapView) findViewById(R.id.map);
+        initMap();
+    }
 
+    private void initMap()
+    {
+        mapController = mapView.getController();
+        mapView.setTileSource(TileSourceFactory.MAPQUESTOSM);
+        mapView.setMultiTouchControls(false);
+        mapView.setBuiltInZoomControls(true);
+        mapView.setUseDataConnection(useOnlineMap);
+
+        mapController.setZoom(zoom);
+        mapController.setCenter(linz);
     }
 
     @Override
