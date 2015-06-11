@@ -5,17 +5,13 @@ import org.osmdroid.util.GeoPoint;
 /**
  * Created by sgschaider on 11.06.2015.
  */
-public class Parkhaus
-{
+public class Parkhaus {
     int id;
     int maxAnzahlParkplaetze;
     String name;
     String standort;
     GeoPoint geoPoint;
     double preis;
-
-    public Parkhaus() {
-    }
 
     public Parkhaus(int id, int maxAnzahlParkplaetze, String name, String standort, GeoPoint geoPoint, double preis) {
         this.id = id;
@@ -26,15 +22,18 @@ public class Parkhaus
         this.preis = preis;
     }
 
+    public Parkhaus() {
+    }
+
     @Override
     public String toString() {
         return "Parkhaus{" +
-                "preis=" + preis +
-                ", geoPoint=" + geoPoint +
-                ", standort='" + standort + '\'' +
-                ", name='" + name + '\'' +
+                "id=" + id +
                 ", maxAnzahlParkplaetze=" + maxAnzahlParkplaetze +
-                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", standort='" + standort + '\'' +
+                ", geoPoint=" + geoPoint +
+                ", preis=" + preis +
                 '}';
     }
 
@@ -86,3 +85,6 @@ public class Parkhaus
         this.preis = preis;
     }
 }
+
+
+

@@ -1,6 +1,7 @@
 package at.htlgrieskirchen.com.parkhausapp;
 
 import android.app.Activity;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +27,9 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mapView = (MapView) findViewById(R.id.map);
         initMap();
+
+        ParkhausDbHelper dbHelper = new ParkhausDbHelper(this);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
     }
 
     private void initMap()
