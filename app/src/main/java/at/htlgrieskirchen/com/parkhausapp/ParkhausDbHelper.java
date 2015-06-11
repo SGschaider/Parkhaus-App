@@ -13,17 +13,20 @@ public class ParkhausDbHelper extends SQLiteOpenHelper
     private final static int DB_VERSION = 1;
 
 
-    public ParkhausDbHelper(Context context) {
+    public ParkhausDbHelper(Context context)
+    {
         super(context, DB_NAME, null, DB_VERSION);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
-
+    public void onCreate(SQLiteDatabase db)
+    {
+        
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+    {
 
     }
 }
