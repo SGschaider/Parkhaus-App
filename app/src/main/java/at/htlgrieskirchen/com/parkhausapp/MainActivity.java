@@ -2,12 +2,15 @@ package at.htlgrieskirchen.com.parkhausapp;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.osmdroid.views.MapView;
+
 
 public class MainActivity extends Activity {
+
+    //protected MapView m
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
