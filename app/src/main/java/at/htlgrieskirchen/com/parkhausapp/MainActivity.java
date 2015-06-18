@@ -1,6 +1,7 @@
 package at.htlgrieskirchen.com.parkhausapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
@@ -54,7 +55,7 @@ public class MainActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.menuKarte){
+        if (id == R.id.menuListe){
             return true;
         }
 
