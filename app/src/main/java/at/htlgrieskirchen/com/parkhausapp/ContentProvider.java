@@ -16,7 +16,7 @@ import java.util.HashSet;
  * Created by thofer
  */
 public class ContentProvider extends android.content.ContentProvider {
-//test
+
     ParkhausDbHelper database;
 
     private static final int PARKHAEUSER = 10;
