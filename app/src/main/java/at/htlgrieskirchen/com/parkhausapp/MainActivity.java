@@ -7,10 +7,15 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.ItemizedOverlayWithFocus;
+import org.osmdroid.views.overlay.OverlayItem;
+
+import java.util.Arrays;
 
 /**
  * Created by thofer
@@ -45,6 +50,20 @@ public class MainActivity extends Activity {
 
         mapController.setZoom(zoom);
         mapController.setCenter(linz);
+
+        addMarkers();
+    }
+
+    private void addMarkers()
+    {
+        OverlayItem overlayItem = new OverlayItem("PH", "Parkhaus", new GeoPoint(48.289365, 14.290229));
+        overlayItem.setMarker(getResources().getDrawable(R.drawable.overlayicon));
+
+        OverlayItem[] items = new OverlayItem[] {overlayItem};
+
+        ItemizedOverlayWithFocus<OverlayItem> itemList = new ItemizedOverlayWithFocus<OverlayItem>(Arrays.asList(items), null, new DefaultResourceProxyImpl(this));
+        itemList.setFocusItemsOnTap(true);
+        mapView.getOverlays().add(itemList);
     }
 
     @Override
