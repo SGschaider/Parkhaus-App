@@ -127,6 +127,8 @@ public class MainActivity extends Activity {
         int id = item.getItemId();
 
         if (id == R.id.menuListe){
+            Intent intent = new Intent(this, ListActivity.class);
+            startActivity(intent);
             return true;
         }
 

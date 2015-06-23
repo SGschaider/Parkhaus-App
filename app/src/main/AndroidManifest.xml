@@ -25,6 +25,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="at.htlgrieskirchen.com.parkhausapp.MyContentProvider"
+            android:name="at.htlgrieskirchen.com.parkhausapp.MyContentProvider" />
+
         <activity android:name=".ListActivity" />
     </application>
 

@@ -1,5 +1,6 @@
 package at.htlgrieskirchen.com.parkhausapp;
 
+import android.content.ContentProvider;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -15,14 +16,14 @@ import java.util.HashSet;
 /**
  * Created by thofer
  */
-public class ContentProvider extends android.content.ContentProvider {
+public class MyContentProvider extends ContentProvider {
 
     ParkhausDbHelper database;
 
     private static final int PARKHAEUSER = 10;
     private static final int PARKHAUS_ID = 20;
 
-    private static final String AUTHORITY = "at.htlgrieskirchen.com.parkhausapp.ContentProvider";
+    private static final String AUTHORITY = "at.htlgrieskirchen.com.parkhausapp.MyContentProvider";
 
     private static final String BASE_PATH = "parkhaeuser";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + BASE_PATH);
