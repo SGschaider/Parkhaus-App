@@ -1,18 +1,27 @@
 package at.htlgrieskirchen.com.parkhausapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -27,7 +36,7 @@ import java.util.List;
 /**
  * Created by thofer
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements LocationListener {
 
     protected MapView mapView;
     protected IMapController mapController;
@@ -39,6 +48,8 @@ public class MainActivity extends Activity {
     ParkhausDbHelper dbHelper = null;
     SQLiteDatabase db = null;
 
+    private static LocationManager locMan = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +58,12 @@ public class MainActivity extends Activity {
         dbHelper = new ParkhausDbHelper(this);
         db = dbHelper.getReadableDatabase();
 
+        locMan = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         mapView = (MapView) findViewById(R.id.map);
         initMap();
         addMarkers();
+        meinStandort();
     }
 
     private void initMap()
@@ -72,16 +86,53 @@ public class MainActivity extends Activity {
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(int index, OverlayItem item) {
+                        showRouteConfirmation();
                         return false;
                     }
 
                     @Override
                     public boolean onItemLongPress(int index, OverlayItem item) {
+                        showRouteConfirmation();
                         return false;
                     }
                 }, new DefaultResourceProxyImpl(this));
         itemList.setFocusItemsOnTap(true);
         mapView.getOverlays().add(itemList);
+    }
+
+    private void showRouteConfirmation()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getResources().getString(R.string.routeConfirmation))
+               .setCancelable(true)
+               .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+                   @Override
+                   public void onClick(DialogInterface dialog, int which) {
+                        routeBerechnen();
+                   }
+               }).setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+               });
+
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void routeBerechnen()
+    {
+        RoadManager roadManager = new MapQuestRoadManager("Hwu5Npb7EaSxje7DBtTnTQgwIBG0XW3M");
+        ArrayList<GeoPoint> waypoints = new ArrayList<>();
+        waypoints.add(new GeoPoint(48.408768, 13.855834)); //startPoint
+        waypoints.add(new GeoPoint(48.289365, 14.290229)); //endPoint
+        roadManager.addRequestOption("routeType=bicycle");
+
+        Road road = roadManager.getRoad(waypoints);
+        org.osmdroid.bonuspack.overlays.Polyline roadOverlay = RoadManager.buildRoadOverlay(road, this);
+        mapView.getOverlays().add(roadOverlay);
+        mapView.invalidate();
     }
 
     private OverlayItem[] loadOverlayItems()
@@ -116,6 +167,27 @@ public class MainActivity extends Activity {
         return  items;
     }
 
+    private void meinStandort()
+    {
+        Location loc = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(loc == null)
+        {
+            Toast.makeText(this, "Aktueller Standort konnten nicht abgerufen werden!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        double latitude = loc.getLatitude();
+        double longitude = loc.getLongitude();
+
+        OverlayItem ich = new OverlayItem("Ich", "Mein Standort", new GeoPoint(latitude, longitude));
+        ich.setMarker(getResources().getDrawable(R.drawable.meinstandort));
+        OverlayItem[] item = new OverlayItem[] {ich};
+
+        ItemizedOverlayWithFocus<OverlayItem> itemList = new ItemizedOverlayWithFocus<OverlayItem>(Arrays.asList(item), null, new DefaultResourceProxyImpl(this));
+        itemList.setFocusItemsOnTap(true);
+        mapView.getOverlays().add(itemList);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -134,4 +206,29 @@ public class MainActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        locMan.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        locMan.removeUpdates(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if(location == null) return;
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {}
+    @Override
+    public void onProviderEnabled(String provider) {}
+    @Override
+    public void onProviderDisabled(String provider) {}
 }
