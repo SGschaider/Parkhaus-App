@@ -12,7 +12,9 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-
+/**
+ * Created by thofer
+ */
 public class MainActivity extends Activity {
 
     protected MapView mapView;

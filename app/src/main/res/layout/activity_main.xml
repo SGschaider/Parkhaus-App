@@ -9,23 +9,9 @@
     tools:context=".MainActivity"
     android:orientation="horizontal">
 
-    <fragment
-        android:id="@+id/map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        class="com.google.android.gms.maps.MapFragment" />
-
-    <!--<com.google.android.maps.MapView
-        android:id="@+id/map"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:clickable="true"
-        android:apiKey="AIzaSyBxya8lvoFDk0pudaRSAJOifMvjhMAYR2g" />-->
-
-<!--
     <org.osmdroid.views.MapView
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></org.osmdroid.views.MapView> -->
+        android:layout_height="match_parent"></org.osmdroid.views.MapView>
 
 </LinearLayout>
