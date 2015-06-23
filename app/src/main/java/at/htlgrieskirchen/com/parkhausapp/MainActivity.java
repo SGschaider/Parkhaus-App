@@ -21,7 +21,7 @@ import java.util.Arrays;
  * Created by thofer
  */
 public class MainActivity extends Activity {
-
+//test commit
     protected MapView mapView;
     protected IMapController mapController;
 
