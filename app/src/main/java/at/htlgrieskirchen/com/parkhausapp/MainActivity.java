@@ -20,6 +20,7 @@ import android.widget.Toast;
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
+import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
@@ -86,13 +87,12 @@ public class MainActivity extends Activity implements LocationListener {
                 new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>() {
                     @Override
                     public boolean onItemSingleTapUp(int index, OverlayItem item) {
-                        showRouteConfirmation();
+                        showRouteConfirmation(item.getPoint());
                         return false;
                     }
 
                     @Override
                     public boolean onItemLongPress(int index, OverlayItem item) {
-                        showRouteConfirmation();
                         return false;
                     }
                 }, new DefaultResourceProxyImpl(this));
@@ -100,7 +100,7 @@ public class MainActivity extends Activity implements LocationListener {
         mapView.getOverlays().add(itemList);
     }
 
-    private void showRouteConfirmation()
+    private void showRouteConfirmation(final GeoPoint geoPoint)
     {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.routeConfirmation))
@@ -108,7 +108,7 @@ public class MainActivity extends Activity implements LocationListener {
                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialog, int which) {
-                        routeBerechnen();
+                        routeBerechnen(geoPoint);
                    }
                }).setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
@@ -121,8 +121,28 @@ public class MainActivity extends Activity implements LocationListener {
         alert.show();
     }
 
-    private void routeBerechnen()
+    private void routeBerechnen(GeoPoint endPoint)
     {
+        Location loc = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if(loc == null)
+        {
+            Toast.makeText(this, "Route kann nicht berechnet werden - Ihr Standort ist nicht bekannt!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //mit Polyline
+        RoadManager roadManager = new OSRMRoadManager();
+
+        ArrayList<GeoPoint> waypoints = new ArrayList<>();
+        waypoints.add(new GeoPoint(loc.getLatitude(), loc.getLongitude())); //startPoint
+        waypoints.add(endPoint); //endPoint
+
+        Road road = roadManager.getRoad(waypoints);
+        org.osmdroid.bonuspack.overlays.Polyline roadOverlay = RoadManager.buildRoadOverlay(road, this);
+        mapView.getOverlays().add(roadOverlay);
+        mapView.invalidate();
+
+        /*
         RoadManager roadManager = new MapQuestRoadManager("Hwu5Npb7EaSxje7DBtTnTQgwIBG0XW3M");
         ArrayList<GeoPoint> waypoints = new ArrayList<>();
         waypoints.add(new GeoPoint(48.408768, 13.855834)); //startPoint
@@ -132,7 +152,7 @@ public class MainActivity extends Activity implements LocationListener {
         Road road = roadManager.getRoad(waypoints);
         org.osmdroid.bonuspack.overlays.Polyline roadOverlay = RoadManager.buildRoadOverlay(road, this);
         mapView.getOverlays().add(roadOverlay);
-        mapView.invalidate();
+        mapView.invalidate(); */
     }
 
     private OverlayItem[] loadOverlayItems()
@@ -160,7 +180,7 @@ public class MainActivity extends Activity implements LocationListener {
         OverlayItem[] items = new OverlayItem[counter];
         for(int i = 0; i < counter; i++)
         {
-            OverlayItem overlayItem = new OverlayItem("Parkhaus", list.get(i).getStandort(), list.get(i).getGeoPoint());
+            OverlayItem overlayItem = new OverlayItem(list.get(i).getName(), list.get(i).getStandort(), list.get(i).getGeoPoint());
             overlayItem.setMarker(getResources().getDrawable(R.drawable.overlayicon));
             items[i] = overlayItem;
         }
