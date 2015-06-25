@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -19,10 +20,12 @@ import android.widget.Toast;
 
 import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.overlays.Marker;
 import org.osmdroid.bonuspack.routing.MapQuestRoadManager;
 import org.osmdroid.bonuspack.routing.OSRMRoadManager;
 import org.osmdroid.bonuspack.routing.Road;
 import org.osmdroid.bonuspack.routing.RoadManager;
+import org.osmdroid.bonuspack.routing.RoadNode;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
@@ -108,7 +111,7 @@ public class MainActivity extends Activity implements LocationListener {
                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
                    @Override
                    public void onClick(DialogInterface dialog, int which) {
-                        routeBerechnen(geoPoint);
+                       routeBerechnen(geoPoint);
                    }
                }).setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                     @Override
@@ -143,10 +146,10 @@ public class MainActivity extends Activity implements LocationListener {
         mapView.invalidate();
 
         /*
-        RoadManager roadManager = new MapQuestRoadManager("Hwu5Npb7EaSxje7DBtTnTQgwIBG0XW3M");
+        RoadManager roadManager = new MapQuestRoadManager("_Hwu5Npb7EaSxje7DBtTnTQgwIBG0XW3M_");
         ArrayList<GeoPoint> waypoints = new ArrayList<>();
-        waypoints.add(new GeoPoint(48.408768, 13.855834)); //startPoint
-        waypoints.add(new GeoPoint(48.289365, 14.290229)); //endPoint
+        waypoints.add(new GeoPoint(48.314800, 14.214778)); //startPoint
+        waypoints.add(new GeoPoint(48.311490, 14.282241)); //endPoint
         roadManager.addRequestOption("routeType=bicycle");
 
         Road road = roadManager.getRoad(waypoints);
@@ -190,22 +193,21 @@ public class MainActivity extends Activity implements LocationListener {
     private void meinStandort()
     {
         Location loc = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
         if(loc == null)
         {
             Toast.makeText(this, "Aktueller Standort konnten nicht abgerufen werden!", Toast.LENGTH_LONG).show();
             return;
         }
 
-        double latitude = loc.getLatitude();
-        double longitude = loc.getLongitude();
-
-        OverlayItem ich = new OverlayItem("Ich", "Mein Standort", new GeoPoint(latitude, longitude));
+        OverlayItem ich = new OverlayItem("Ich", "Mein Standort", geoPoint);
         ich.setMarker(getResources().getDrawable(R.drawable.meinstandort));
         OverlayItem[] item = new OverlayItem[] {ich};
 
         ItemizedOverlayWithFocus<OverlayItem> itemList = new ItemizedOverlayWithFocus<OverlayItem>(Arrays.asList(item), null, new DefaultResourceProxyImpl(this));
         itemList.setFocusItemsOnTap(true);
         mapView.getOverlays().add(itemList);
+        mapView.invalidate();
     }
 
     @Override
