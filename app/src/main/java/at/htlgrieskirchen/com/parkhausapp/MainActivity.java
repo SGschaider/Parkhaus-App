@@ -193,12 +193,14 @@ public class MainActivity extends Activity implements LocationListener {
     private void meinStandort()
     {
         Location loc = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
+
         if(loc == null)
         {
             Toast.makeText(this, "Aktueller Standort konnten nicht abgerufen werden!", Toast.LENGTH_LONG).show();
             return;
         }
+
+        GeoPoint geoPoint = new GeoPoint(loc.getLatitude(), loc.getLongitude());
 
         OverlayItem ich = new OverlayItem("Ich", "Mein Standort", geoPoint);
         ich.setMarker(getResources().getDrawable(R.drawable.meinstandort));
